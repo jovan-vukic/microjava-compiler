@@ -1,0 +1,27 @@
+program P
+
+	const int zero = 0;
+	const int one = 1;
+	const int five = 5;
+
+	int array[], array2[], a, b;
+	char charArray[];
+
+{
+	void main()
+		int numberOfElements;
+		bool elementExists;
+	{
+		array = new int[4];
+		array[zero] = 1;
+		array[1] = 2;
+		array[2] = 2;
+		array[3] = 2;
+
+		elementExists = array.findAny(1);
+		numberOfElements = array.findAll(2);
+
+		print(elementExists);
+		print(numberOfElements);
+	}
+}

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MJCompiler" default="compile" basedir=".">
+    <target name="delete">
+        <delete>
+            <fileset dir="src/rs/ac/bg/etf/pp1">
+                <exclude name="util/Log4JUtils.java"/>
+                <exclude name="util/CommonUtils.java"/>
+                <!-- <exclude name="sym.java"/> -->         <!-- REMOVE comment while debugging -->
+                <!-- <exclude name="Yylex.java"/> -->       <!-- REMOVE comment while debugging -->
+                <exclude name="SemanticAnalyzer.java"/>
+                <exclude name="CodeGenerator.java"/>
+                <exclude name="CounterVisitor.java"/>
+            </fileset>
+        </delete>
+        <delete>
+            <fileset dir="spec">
+                <exclude name="mjlexer.flex"/>
+                <exclude name="mjparser.cup"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="lexerGen" depends="delete">
+        <java jar="lib/JFlex.jar" fork="true">
+            <!-- <arg value="-h"/> -->              <!-- Lists all JFlex.jar functionalities -->
+            <arg value="-d"/>
+            <arg value="./src/rs/ac/bg/etf/pp1"/>   <!-- Directory containing Yylex.java -->
+            <arg value="spec/mjlexer.flex"/>        <!-- File with specification -->
+        </java>
+    </target>
+
+    <target name="parserGen" depends="lexerGen">    <!-- CHANGE to lexerGen while debugging -->
+        <java jar="lib/cup_v10k.jar" fork="true">
+            <!-- <arg value="-h"/> -->              <!-- Lists all cup_v10k.jar functionalities -->
+            <arg value="-destdir"/>                 <!-- Destination folder for generated files -->
+            <arg value="src/rs/ac/bg/etf/pp1"/>
+            <arg value="-ast"/>                     <!-- Package for classes generated for building syntax tree -->
+            <arg value="src.rs.ac.bg.etf.pp1.ast"/>
+            <arg value="-parser"/>                  <!-- Parser name -->
+            <arg value="MJParser"/>
+            <arg value="-dump_states"/>             <!-- Useful if conflicts arise in the grammar -->
+            <arg value="-buildtree"/>               <!-- Draws dynamic tree -->
+            <arg value="spec/mjparser.cup"/>        <!-- File with CUP tool specification -->
+        </java>
+    </target>
+
+    <target name="repackage" depends="parserGen">
+        <!-- Replaces references to the package 'src.rs.ac.bg.etf.pp1.ast' with the package 'rs.ac.bg.etf.pp1.ast' -->
+        <replace dir="src" value="rs.ac.bg.etf.pp1.ast" token="src.rs.ac.bg.etf.pp1.ast" summary="true"/>
+    </target>
+
+    <!-- Adds external libraries to the classpath for build.xml -->
+    <target name="compile" depends="repackage">
+        <javac srcdir="src/rs/ac/bg/etf/pp1" includeantruntime="false" source="1.8" target="1.8">
+            <classpath>
+                <pathelement path="lib/JFlex.jar"/>
+                <pathelement path="lib/cup_v10k.jar"/>
+                <pathelement path="lib/log4j-1.2.17.jar"/>
+                <pathelement path="lib/symboltable-1-1.jar"/>
+                <pathelement path="lib/mj-runtime-1.1.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Targets for running and disassembling program.obj file -->
+    <target name="disasmProgram">
+        <java classname="rs.etf.pp1.mj.runtime.disasm">
+            <arg value="test/program.obj"/>                         <!-- Object file as a parameter for disassembler -->
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>    <!-- Invokes 'disasm::.main' -->
+            </classpath>
+        </java>
+    </target>
+
+    <target name="runProgram" depends="disasmProgram">              <!-- Invokes disassembler, then runs code on VM -->
+        <java classname="rs.etf.pp1.mj.runtime.Run">
+            <arg value="test/program.obj"/>
+            <redirector input="test/prog_input.txt"/>
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="debugProgram" depends="disasmProgram">
+        <java classname="rs.etf.pp1.mj.runtime.Run">
+            <arg value="test/program.obj"/>
+            <redirector input="test/prog_input.txt"/>
+            <arg value="-debug"/>
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!-- Targets for running and disassembling test301.obj file -->
+    <target name="disasmTest301">
+        <java classname="rs.etf.pp1.mj.runtime.disasm">
+            <arg value="test/test301.obj"/>                         <!-- Object file as a parameter for disassembler -->
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>    <!-- Invokes 'disasm::.main' -->
+            </classpath>
+        </java>
+    </target>
+
+    <target name="runTest301" depends="disasmProgram">              <!-- Invokes disassembler, then runs code on VM -->
+        <java classname="rs.etf.pp1.mj.runtime.Run">
+            <arg value="test/test301.obj"/>
+            <redirector input="test/test301_input.txt"/>
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="debugTest301" depends="disasmProgram">
+        <java classname="rs.etf.pp1.mj.runtime.Run">
+            <arg value="test/test301.obj"/>
+            <redirector input="test/test301_input.txt"/>
+            <arg value="-debug"/>
+            <classpath>
+                <pathelement location="lib/mj-runtime-1.1.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>

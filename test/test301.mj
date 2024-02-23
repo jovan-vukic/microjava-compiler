@@ -1,0 +1,44 @@
+program test301
+
+	const int zero = 0;
+	const int one = 1;
+	const int five = 5;
+
+	int array[], array2[], a, b;
+	char charArray[];
+
+{
+	void main()
+		int value;
+		bool elementExists;
+	{
+		value = 0;
+		value++;
+		value = value + one;
+		value = value * five;
+		value--;
+		print(value);
+
+		array = new int[3];
+		array[zero] = one;
+		array[1] = 2;
+		array[array[one]] = array[array[0]] * 3;
+		value = array[2]/array[0];
+		print(value);
+		print(array[2]);
+
+		elementExists = array.findAny(one + five);
+		print(elementExists);
+
+		charArray = new char[3];
+		charArray[0] = 'a';
+		charArray[one] = 'b';
+		charArray[five - 3] = 'c';
+		print(charArray[1]);
+		print(charArray[one * 2]);
+
+		read(value);
+		value = -value + (five * a / 2 - one) * value - (3 % 2 + 3 * 2 - 3);
+		print(value);
+	}
+}

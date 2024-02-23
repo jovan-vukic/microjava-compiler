@@ -1,0 +1,33 @@
+# Java related files
+target/**
+*.war
+*.ear
+*.class
+
+# IDE specific files
+.idea/
+.settings/
+.classpath
+.project
+.metadata
+bin/
+out/
+bin/**
+tmp/**
+tmp/**/*
+*.iml
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+
+# Other files
+**/MJParser.java
+**/sym.java
+**/Yylex.java
+**/ast/**
+spec/mjparser_astbuild.cup
+*.log*
+*.obj*
